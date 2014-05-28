@@ -1,0 +1,72 @@
+\documentclass[11pt,ngerman,a4paper]{article}
+%Gummi|061|=)
+\usepackage{amsmath}
+\usepackage{a4wide}
+
+\usepackage{amsthm}
+\usepackage{amsbsy}
+\usepackage{amssymb}
+\usepackage{inputenc}
+\usepackage{here}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{selinput}\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+\usepackage{listings}
+\lstset{
+  language=Matlab,
+  basicstyle=\ttfamily,
+  showstringspaces=false,
+  formfeed=newpage,
+  tabsize=4,
+  commentstyle=\itshape,
+}
+\SelectInputMappings{%
+adieresis={ä},
+germandbls={ß},
+}
+\title{\textbf{Numerik-Programmierabgabe: Blatt 6}\\
+Gruppe: 3}
+\author{Martin Bieker\\
+		Julian Surmann\\
+}
+\date{}
+\usepackage{graphicx}
+\begin{document}
+\renewcommand\tablename{Tabelle}
+\renewcommand\figurename{Abbildung}
+\maketitle
+\section{Funktion \texttt{LU = LU\_decompose(A)}}
+Diese Funktion berechnet aus einer gegebenen Matrix A die LR-Zerlegung und gibt diese platzsparend in einer Matrix LU wieder zur\"uck. Zun\"achst werden die Quotienten $q_i$ der Matrixelemente $A_{i-1,i} ... A_{n,i}$ mit dem Pivotelement $A_{i,i}$ berechnet. Danach werden die Elemente der oberen Dreiecksmatrix bestimmt.
+\lstinputlisting[caption=Skript - \textit{LU\_decompose.m}]{LU_decompose.m}
+
+\section{Funktion \texttt{z = forward\_solve(LU, b)}}
+Diese Funktion löst das LGS 
+\[
+L\cdot \vec z = \vec b 
+\]
+durch Vorw\"artseinsetzen. Dabei wird ausgenutzt, dass die Elemente auf der Hauptdiagonalen der unteren Dreiecksmatrix gleich eins sind. Daher gilt f\"ur $z_i$:
+\[
+z_i = x_i - \sum^{i-1}_{j=1} L_{i,j}\cdot b_j \mathrm{.}
+\]
+
+\lstinputlisting[caption=Skript - \textit{forward\_solve.m}]{forward_solve.m}
+
+\section{Funktion \texttt{x = backward\_solve(LU, z)}}
+
+Als letzter Schritt zur Bestimmung des L\"osungsvektors $\vec x$ ist das Gleichungssystem mit der Oberen Dreiecksmatrix
+\[
+R\cdot\vec x = \vec z
+\]
+ zu l\"osen. Dazu werden die Schritte aus Abschnitt 2 r\"uckw\"arts durchlaufen. Es gilt f\"ur das $i$-te Element von $\vec x$:
+ \[
+ x_i = \frac{z_i- \sum^n_{j=i +1} A_{i,j}\cdot x_j }{A_{i,i}}
+ \]
+ \newpage
+ \lstinputlisting[caption=Skript - \textit{backward\_solve.m}]{backward_solve.m}
+ 
+ \section{Skript \texttt{LU\_test.m}}
+ Um die oben implementierten Funktionen zu testen, werden in diesem Skript 3 zuf\"allige Matrizen und rechte Seiten verschiedener Gr\"o\ss e erzeugt. Danach wird die LR-Zerlegung der Matrix bestimmt. Die L\"osung des LGS wird dann mit Hilfe der Funktionen \texttt{forward\_solve} und \texttt{backward\_solve} bestimmt. Zum Vergleich werden die Gleichungssysteme auch mit dem in Octave integrierten Operator bestimmt.
+ \newpage
+ \lstinputlisting[caption=Skript - \textit{LU\_Test.m}]{LU_test.m}
+\end{document}
